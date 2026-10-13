@@ -148,6 +148,33 @@
         <p class="rodape-calc">Energia só da GPU (NVIDIA L40S), com 256 tokens de pergunta e 256 de resposta. O servidor e a refrigeração do datacenter somariam de 20 a 60%. Fatores: MCTI (Brasil, 2025) e Ember (2025).</p>
       </div>
     </div>
+
+    <div class="qual" id="qualidade-detalhe" aria-live="polite">
+      <div class="qual-topo">
+        <div>
+          <p class="rotulo">Qualidade nesta configuração</p>
+          <h3 id="q-titulo">—</h3>
+          <p class="qual-sub" id="q-sub"></p>
+        </div>
+        <ul class="legenda-status">
+          <li><span class="selo nao-inferior">não-inferior</span> perde menos de 5 pontos, com 95% de confiança</li>
+          <li><span class="selo perda">perda demonstrada</span> o comprimido acerta menos, com 95% de confiança</li>
+          <li><span class="selo inconclusivo">inconclusivo</span> as perguntas não bastam para decidir</li>
+        </ul>
+      </div>
+      <div class="qual-tabela" role="table" aria-label="Acurácia por domínio">
+        <div class="qual-linha qual-cab" role="row">
+          <span role="columnheader">Domínio</span>
+          <span role="columnheader">Acertos do original</span>
+          <span role="columnheader">Acertos do comprimido</span>
+          <span role="columnheader">Diferença e intervalo de 95%</span>
+          <span role="columnheader">Veredito</span>
+          <span role="columnheader">Perguntas que mudaram</span>
+        </div>
+        <div id="q-linhas"></div>
+      </div>
+      <p class="qual-nota">Medido em lote 16, com 300 a 400 perguntas por domínio. O original é comparado no mesmo runtime do formato (vLLM ou transformers), por isso seus acertos variam um pouco entre formatos. Na régua, o ponto é a diferença, a faixa é o intervalo de 95%, a linha cheia é o zero e a tracejada é a margem de −5 pontos. "Perguntas que mudaram": quantas só o original acertou e quantas só o comprimido acertou; a diferença entre as duas é o que move a acurácia.</p>
+    </div>
   </section>
 
   <section id="resultados" class="secao">

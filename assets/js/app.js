@@ -104,6 +104,49 @@
       q.classList.add("bom");
       q.innerHTML = `<b>Qualidade:</b> pior perda de ${nf(f.pior)} pontos (${f.pior_dominio}), sem perda demonstrada além da margem de 5 pontos.`;
     }
+    qualidade(m, f);
+  }
+
+  // ---------------- detalhe de qualidade ----------------
+  const CLASSE = { "não-inferior": "nao-inferior", "perda demonstrada": "perda", "inconclusivo": "inconclusivo" };
+  const MIN = -22, MAX = 8;
+  const pos = (v) => ((Math.max(MIN, Math.min(MAX, v)) - MIN) / (MAX - MIN)) * 100;
+
+  function qualidade(m, f) {
+    const nomeF = f.nome === "BF16 (original)" ? "original" : f.nome;
+    const linhas = $("q-linhas");
+    if (!f.suites || !f.suites.length) {
+      $("q-titulo").textContent = `${m.nome} · modelo original`;
+      $("q-sub").textContent = "Escolha um formato comprimido acima para ver, domínio a domínio, quanto ele acerta a menos ou a mais que o original.";
+      linhas.innerHTML = "";
+      return;
+    }
+    const cont = { "não-inferior": 0, "perda demonstrada": 0, "inconclusivo": 0 };
+    f.suites.forEach((s) => cont[s.status]++);
+    $("q-titulo").textContent = `${m.nome} em ${nomeF}`;
+    $("q-sub").textContent = `Em ${f.suites.length} conjuntos de perguntas: ${cont["não-inferior"]} não-inferiores, ` +
+      `${cont["perda demonstrada"]} com perda demonstrada e ${cont["inconclusivo"]} inconclusivos.`;
+    const zero = pos(0), margem = pos(-5);
+    linhas.innerHTML = f.suites.map((s) => {
+      const cl = CLASSE[s.status];
+      const ini = pos(s.ic[0]), fim = pos(s.ic[1]);
+      return `<div class="qual-linha" role="row">
+        <span role="cell" class="dom">${s.nome}<small>${s.n} perguntas</small></span>
+        <span role="cell" class="num-cel"><b>${s.acertos_orig}</b> <small>(${nf(s.acc_orig)}%)</small></span>
+        <span role="cell" class="num-cel"><b>${s.acertos_comp}</b> <small>(${nf(s.acc_comp)}%)</small></span>
+        <span role="cell" class="dif">
+          <span class="dif-valor ${cl}">${sinal(s.delta)} p.p.</span>
+          <span class="regua" aria-label="intervalo de ${nf(s.ic[0])} a ${nf(s.ic[1])} pontos">
+            <i class="regua-margem" style="left:${margem}%"></i><i class="regua-zero" style="left:${zero}%"></i>
+            <i class="regua-ic ${cl}" style="left:${ini}%;width:${Math.max(1, fim - ini)}%"></i>
+            <i class="regua-ponto ${cl}" style="left:${pos(s.delta)}%"></i>
+          </span>
+          <small>IC: ${nf(s.ic[0])} a ${sinal(s.ic[1])}</small>
+        </span>
+        <span role="cell"><span class="selo ${cl}">${s.status}</span></span>
+        <span role="cell" class="mudou"><span>só o original: <b>${s.so_orig}</b></span><span>só o comprimido: <b>${s.so_comp}</b></span></span>
+      </div>`;
+    }).join("");
   }
 
   $("c-n").addEventListener("input", (e) => { estado.expoente = parseFloat(e.target.value); render(); });
