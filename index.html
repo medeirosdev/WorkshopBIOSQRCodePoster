@@ -20,6 +20,7 @@
 <header class="topo">
   <a class="marca" href="#inicio"><span class="ponto"></span>III WBI0S <span class="sep">·</span> Pôster nº 04</a>
   <nav aria-label="Seções">
+    <a href="#quantizar">Quantizar</a>
     <a href="#perguntas">Respostas</a>
     <a href="#calculadora">Calculadora</a>
     <a href="#resultados">Resultados</a>
@@ -48,6 +49,27 @@
     </div>
   </section>
 
+  <section id="quantizar" class="secao">
+    <div class="cabecalho">
+      <p class="rotulo">Conceito</p>
+      <h2>O que é quantizar um LLM?</h2>
+      <p class="lead">Um modelo de linguagem é, no fundo, uma enorme coleção de números, os pesos. Quantizar é guardar cada peso com menos bits: em vez de 16, usar 8 ou 4.</p>
+    </div>
+    <div class="dupla">
+      <figure class="figura">
+        <button class="zoom" data-src="assets/img/fig0_quantizar.webp" aria-label="Ampliar a Figura 1">
+          <img src="assets/img/fig0_quantizar.webp" alt="Uma matriz de pesos com valores como 0,412 e −1,307, em 16 bits, é arredondada para códigos inteiros de −8 a 7, em 4 bits. Exemplo: 0,412 dividido pela escala 0,279 dá 1,48, guardado como 1." loading="lazy">
+        </button>
+        <figcaption><b>Figura 1.</b> O que é quantizar: cada peso vira um de 16 níveis, guardado em 4 bits (exemplo com quantização uniforme).</figcaption>
+      </figure>
+      <div class="texto-bloco">
+        <p>Cada peso é dividido por uma <b>escala</b> e arredondado para um número inteiro. Com 4 bits, só existem 16 valores possíveis, de −8 a 7.</p>
+        <p>O modelo passa a ocupar <b>4 vezes menos memória</b>, e por isso cabe em GPUs menores. O preço é duplo: o arredondamento perde precisão, e a GPU precisa reconstruir os pesos a cada uso, o que também consome energia.</p>
+        <p>Os formatos testados (FP8, INT8, AWQ, GPTQ e NF4) diferem em quantos bits usam e em como escolhem a escala. Este trabalho mede o efeito líquido de cada um na energia, no carbono e na qualidade.</p>
+      </div>
+    </div>
+  </section>
+
   <section id="perguntas" class="secao">
     <div class="cabecalho">
       <p class="rotulo">A resposta em 30 segundos</p>
@@ -58,30 +80,30 @@
       <article class="cartao">
         <span class="num">1</span>
         <h3>A quantização sempre reduz a energia?</h3>
-        <p class="resposta">Não.</p>
+        <p class="resposta">Nem sempre.</p>
         <p>AWQ e GPTQ economizam de 58 a 74%, e o FP8 cerca de 40%. Mas o <strong>INT8 do bitsandbytes gasta 25% a mais</strong> que o modelo original.</p>
         <a href="#tabela" class="ver">Ver a Tabela 1 →</a>
       </article>
       <article class="cartao">
         <span class="num">2</span>
-        <h3>Por que às vezes ela gasta mais?</h3>
-        <p class="resposta">Respostas curtas e divagação.</p>
-        <p>Descomprimir os pesos tem um custo. O NF4 só compensa depois de <strong>3 a 19 tokens</strong> de resposta, e nunca no modelo de 1,7B. Às vezes o modelo comprimido também escreve mais.</p>
+        <h3>Por que, em alguns casos, ela aumenta o consumo?</h3>
+        <p class="resposta">Em respostas curtas, o custo de descomprimir domina.</p>
+        <p>A cada uso, a GPU reconstrói os pesos comprimidos, e isso consome energia. O NF4 só compensa depois de <strong>3 a 19 tokens</strong> de resposta, e nunca compensou no modelo de 1,7B. Em alguns casos o modelo comprimido também escreve respostas mais longas.</p>
         <a href="#galeria" class="ver">Ver as curvas →</a>
       </article>
       <article class="cartao">
         <span class="num">3</span>
-        <h3>Quanto CO₂, e o que pesa mais?</h3>
-        <p class="resposta">A rede e o lote, mais que o formato.</p>
-        <p>A mesma resposta emite <strong>~10× menos CO₂</strong> no Brasil que na média mundial. Atender 16 perguntas juntas reduz a energia de 5 a 10×. O formato, de 1,7 a 2,7×.</p>
-        <a href="#resultados" class="ver">Ver a Figura 2 →</a>
+        <h3>Quanto CO₂ se emite, e o que pesa mais?</h3>
+        <p class="resposta">A rede elétrica e o lote pesam mais que o formato.</p>
+        <p>Na rede brasileira, a mesma resposta emite <strong>cerca de 10 vezes menos CO₂</strong> que na média mundial. Atender 16 perguntas por vez reduz a energia de 5 a 10 vezes; a escolha do formato, de 1,7 a 2,7 vezes.</p>
+        <a href="#resultados" class="ver">Ver a Figura 3 →</a>
       </article>
       <article class="cartao">
         <span class="num">4</span>
-        <h3>Custa qualidade? O MMLU avisa?</h3>
-        <p class="resposta">Depende do domínio, e o MMLU não avisa.</p>
-        <p>No Qwen3-8B em NF4, o MMLU não perde nada, mas <strong>finanças perde 14,7 pontos</strong>. O FP8 não teve perda demonstrada em nenhum domínio testado.</p>
-        <a href="#qualidade" class="ver">Ver a Figura 3 →</a>
+        <h3>Ela reduz a qualidade? Um benchmark genérico detecta isso?</h3>
+        <p class="resposta">Depende do domínio, e o MMLU não detectou as maiores perdas.</p>
+        <p>No Qwen3-8B em NF4, a acurácia no MMLU não caiu, mas em <strong>finanças caiu 14,7 pontos</strong>. O FP8 não teve perda demonstrada em nenhum domínio testado.</p>
+        <a href="#qualidade" class="ver">Ver a Figura 4 →</a>
       </article>
     </div>
   </section>
@@ -136,10 +158,10 @@
     </div>
     <div class="dupla">
       <figure class="figura alta">
-        <button class="zoom" data-src="assets/img/fig2_carbono.webp" aria-label="Ampliar a Figura 2">
+        <button class="zoom" data-src="assets/img/fig2_carbono.webp" aria-label="Ampliar a Figura 3">
           <img src="assets/img/fig2_carbono.webp" alt="Barras: rede brasileira 9,9 vezes menos CO₂, lote 16 9,6 vezes, AWQ 2,7, FP8 1,7, NF4 1,6; INT8 do bitsandbytes 1,3 vez mais. Abaixo, kg de CO₂ por milhão de respostas, de 195 kg (original, média mundial) a 0,9 kg (AWQ em lote 16, Brasil)." loading="lazy">
         </button>
-        <figcaption><b>Figura 2.</b> Parte B, Qwen3-8B. (a) Quanto cada escolha reduz o CO₂ por resposta; (b) as escolhas combinadas.</figcaption>
+        <figcaption><b>Figura 3.</b> Parte B, Qwen3-8B. (a) Quanto cada escolha reduz o CO₂ por resposta; (b) as escolhas combinadas.</figcaption>
       </figure>
       <div id="tabela" class="tabela-bloco">
         <h3>Tabela 1 · Parte B: as 7 configurações</h3>
@@ -165,16 +187,17 @@
 
     <div class="dupla invertida" id="qualidade">
       <div class="texto-bloco">
-        <h3>O benchmark genérico não avisa</h3>
-        <p>O MMLU, a prova genérica mais usada, mostra pouca ou nenhuma perda em quase todos os formatos. No domínio, a história muda: <strong>finanças, direito e matemática</strong> perdem de 5 a 15 pontos com AWQ, GPTQ e NF4.</p>
+        <h3>Um bom resultado no MMLU não garante qualidade no domínio</h3>
+        <p class="caixa-mmlu"><b>O que é o MMLU?</b> O MMLU (<i>Massive Multitask Language Understanding</i>) é um benchmark genérico de múltipla escolha, com cerca de 16 mil questões de 57 áreas, como matemática, história, direito e medicina. É a prova mais usada para comparar modelos de linguagem.</p>
+        <p>Nos formatos testados, a acurácia no MMLU quase não muda. Nas perguntas de domínios específicos, porém, AWQ, GPTQ e NF4 perderam de 5 a 15 pontos, sobretudo em <strong>finanças, direito e matemática</strong>.</p>
         <p>O FP8 e o INT8 W8A8 foram os únicos formatos sem perda demonstrada em nenhum domínio testado.</p>
-        <p class="destaque-texto">Antes de comprimir, teste com as perguntas do seu domínio.</p>
+        <p class="destaque-texto">Por isso, cada formato deve ser avaliado com perguntas da própria aplicação.</p>
       </div>
       <figure class="figura">
-        <button class="zoom" data-src="assets/img/fig3_qualidade.webp" aria-label="Ampliar a Figura 3">
+        <button class="zoom" data-src="assets/img/fig3_qualidade.webp" aria-label="Ampliar a Figura 4">
           <img src="assets/img/fig3_qualidade.webp" alt="Para cada formato, a perda no MMLU (perto de zero) e a perda no pior domínio (até menos 14,7 pontos, finanças, NF4 no Qwen3-8B)." loading="lazy">
         </button>
-        <figcaption><b>Figura 3.</b> Parte B: perda de acurácia no MMLU (anel) e no pior domínio (ponto), nos dois modelos de 8B.</figcaption>
+        <figcaption><b>Figura 4.</b> Parte B: perda de acurácia no MMLU (anel) e no pior domínio (ponto), nos dois modelos de 8B.</figcaption>
       </figure>
     </div>
 
@@ -191,10 +214,10 @@
     </div>
     <div class="dupla">
       <figure class="figura alta">
-        <button class="zoom" data-src="assets/img/fig1_como_medimos.webp" aria-label="Ampliar a Figura 1">
+        <button class="zoom" data-src="assets/img/fig1_como_medimos.webp" aria-label="Ampliar a Figura 2">
           <img src="assets/img/fig1_como_medimos.webp" alt="Fluxograma: modelos e formatos, perguntas por domínio, medição na GPU, energia e qualidade, conversão para CO₂." loading="lazy">
         </button>
-        <figcaption><b>Figura 1.</b> Como medimos.</figcaption>
+        <figcaption><b>Figura 2.</b> Como medimos.</figcaption>
       </figure>
       <div class="texto-bloco lista">
         <ul class="passos">

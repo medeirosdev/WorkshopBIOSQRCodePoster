@@ -96,10 +96,10 @@
       q.innerHTML = "<b>Modelo original.</b> É a referência de qualidade: as perdas dos outros formatos são medidas contra ele.";
     } else if (J > Jo) {
       q.classList.add("ruim");
-      q.innerHTML = `<b>Este formato gasta mais energia que o original</b> (+${nf((J / Jo - 1) * 100, 0)}%). Comprimir com ele não economiza nada.`;
+      q.innerHTML = `<b>Este formato consome mais energia que o original</b> (+${nf((J / Jo - 1) * 100, 0)}%): nesta configuração, comprimir não traz economia.`;
     } else if (f.pior <= -5 && f.pior_demonstrada) {
       q.classList.add("ruim");
-      q.innerHTML = `<b>Atenção à qualidade:</b> ${nf(f.pior)} pontos em ${f.pior_dominio} (perda demonstrada), enquanto o MMLU mostra ${sinal(f.mmlu)}. Teste no seu domínio antes de usar.`;
+      q.innerHTML = `<b>Atenção à qualidade:</b> em ${f.pior_dominio}, a acurácia caiu ${nf(Math.abs(f.pior))} pontos (perda demonstrada), enquanto no MMLU a variação foi de ${sinal(f.mmlu)}. Vale avaliar o formato com perguntas da sua aplicação.`;
     } else {
       q.classList.add("bom");
       q.innerHTML = `<b>Qualidade:</b> pior perda de ${nf(f.pior)} pontos (${f.pior_dominio}), sem perda demonstrada além da margem de 5 pontos.`;

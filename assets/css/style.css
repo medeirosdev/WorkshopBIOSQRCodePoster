@@ -251,3 +251,7 @@ dialog#lightbox .fechar { position: fixed; top: 14px; right: 16px; width: 44px; 
   .revelar { opacity: 1; transform: none; transition: none; }
   * { transition: none !important; animation: none !important; }
 }
+
+.caixa-mmlu { padding: 16px 18px; border-radius: 14px; background: var(--superficie); border: 1px solid var(--borda); border-left-width: 1px; font-size: 15.5px; }
+.caixa-mmlu b { color: var(--laranja-esc); }
+@media (prefers-color-scheme: dark) { .caixa-mmlu b { color: #F39A55; } }
