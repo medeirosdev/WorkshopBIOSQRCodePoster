@@ -52,7 +52,7 @@
     <div class="cabecalho">
       <p class="rotulo">A resposta em 30 segundos</p>
       <h2>Quatro perguntas, quatro respostas</h2>
-      <p class="lead">Medimos a energia e a qualidade de 5 modelos abertos (original × NF4) com perguntas de 14 domínios e, nos dois modelos de 8B, comparamos 6 formatos de quantização, numa GPU NVIDIA L40S. O CO₂ vem da energia medida vezes o fator de emissão da rede elétrica.</p>
+      <p class="lead">O experimento tem duas partes, numa GPU NVIDIA L40S. <b>Parte A:</b> 5 modelos abertos, em original × NF4, com perguntas de 14 domínios. <b>Parte B:</b> os dois modelos de 8B em 7 configurações de quantização (6 formatos, com o INT8 em duas implementações). O CO₂ vem da energia medida vezes o fator de emissão da rede elétrica.</p>
     </div>
     <div class="cartoes">
       <article class="cartao">
@@ -90,7 +90,7 @@
     <div class="cabecalho">
       <p class="rotulo">Interativo</p>
       <h2>Calcule o CO₂ da sua inferência</h2>
-      <p class="lead">Escolha o modelo, o formato, quantas perguntas o servidor atende de uma vez e onde ele roda. Os valores são os que medimos.</p>
+      <p class="lead">Escolha o modelo, o formato, quantas perguntas o servidor atende de uma vez e onde ele roda. Os valores são os que medimos na parte B (Qwen3-8B e Llama-3.1-8B).</p>
     </div>
     <div class="calc">
       <form class="controles" id="controles" onsubmit="return false">
@@ -139,10 +139,10 @@
         <button class="zoom" data-src="assets/img/fig2_carbono.webp" aria-label="Ampliar a Figura 2">
           <img src="assets/img/fig2_carbono.webp" alt="Barras: rede brasileira 9,9 vezes menos CO₂, lote 16 9,6 vezes, AWQ 2,7, FP8 1,7, NF4 1,6; INT8 do bitsandbytes 1,3 vez mais. Abaixo, kg de CO₂ por milhão de respostas, de 195 kg (original, média mundial) a 0,9 kg (AWQ em lote 16, Brasil)." loading="lazy">
         </button>
-        <figcaption><b>Figura 2.</b> (a) Quanto cada escolha reduz o CO₂ por resposta; (b) as escolhas combinadas. Qwen3-8B.</figcaption>
+        <figcaption><b>Figura 2.</b> Parte B, Qwen3-8B. (a) Quanto cada escolha reduz o CO₂ por resposta; (b) as escolhas combinadas.</figcaption>
       </figure>
       <div id="tabela" class="tabela-bloco">
-        <h3>Tabela 1 · Os formatos lado a lado</h3>
+        <h3>Tabela 1 · Parte B: as 7 configurações</h3>
         <div class="tabela-rolagem">
           <table>
             <thead>
@@ -151,7 +151,7 @@
             <tbody>
               <tr><th>BF16 (original)</th><td>—</td><td>19,3</td><td>192</td><td>—</td></tr>
               <tr><th>FP8</th><td>−42%</td><td>11,3</td><td>112</td><td>−3,3</td></tr>
-              <tr><th>INT8 W8A8*</th><td>−44%</td><td>10,5</td><td>105</td><td>−1,3</td></tr>
+              <tr><th>INT8 (vLLM)*</th><td>−44%</td><td>10,5</td><td>105</td><td>−1,3</td></tr>
               <tr><th>GPTQ</th><td>−64%</td><td>6,9</td><td>68</td><td class="ruim">−7,0</td></tr>
               <tr><th>AWQ</th><td>−64%</td><td>7,0</td><td>69</td><td class="ruim">−10,3</td></tr>
               <tr><th>NF4 (bnb)</th><td>−41%</td><td>12,1</td><td>121</td><td class="ruim">−14,7</td></tr>
@@ -159,7 +159,7 @@
             </tbody>
           </table>
         </div>
-        <p class="nota">Média de Qwen3-8B e Llama-3.1-8B, uma pergunta por vez; pior perda entre 7 suítes. * Só Llama-3.1-8B. bnb = bitsandbytes. Em vermelho: perda maior que 5 pontos, ou mais energia que o original.</p>
+        <p class="nota">Média de Qwen3-8B e Llama-3.1-8B, uma pergunta por vez; pior perda entre 7 suítes. O INT8 aparece em duas implementações: W8A8 no vLLM e LLM.int8 no bitsandbytes (bnb). * Só Llama-3.1-8B: o checkpoint do Qwen3-8B é incompatível. Em vermelho: perda maior que 5 pontos, ou mais energia que o original.</p>
       </div>
     </div>
 
@@ -174,7 +174,7 @@
         <button class="zoom" data-src="assets/img/fig3_qualidade.webp" aria-label="Ampliar a Figura 3">
           <img src="assets/img/fig3_qualidade.webp" alt="Para cada formato, a perda no MMLU (perto de zero) e a perda no pior domínio (até menos 14,7 pontos, finanças, NF4 no Qwen3-8B)." loading="lazy">
         </button>
-        <figcaption><b>Figura 3.</b> Perda de acurácia no MMLU (anel) e no pior domínio (ponto).</figcaption>
+        <figcaption><b>Figura 3.</b> Parte B: perda de acurácia no MMLU (anel) e no pior domínio (ponto), nos dois modelos de 8B.</figcaption>
       </figure>
     </div>
 
@@ -199,7 +199,8 @@
       <div class="texto-bloco lista">
         <ul class="passos">
           <li><b>5 modelos abertos</b>: Qwen3 1,7B, 4B e 8B; Llama-3.1-8B; Gemma-4-E4B.</li>
-          <li><b>Formatos</b>: os 5 modelos em original (BF16) × NF4; nos dois de 8B (Qwen3-8B e Llama-3.1-8B), 6 formatos: BF16, FP8, INT8, AWQ, GPTQ e NF4, no vLLM e no transformers + bitsandbytes. Figuras 2 e 3 e Tabela 1 vêm desses dois.</li>
+          <li><b>Parte A</b>: os 5 modelos em original (BF16) × NF4, nos 14 domínios. Daqui vêm a perda por domínio e as curvas de energia.</li>
+          <li><b>Parte B</b>: os dois de 8B (Qwen3-8B e Llama-3.1-8B) em 7 configurações: BF16, FP8, INT8 no vLLM (W8A8), GPTQ, AWQ, NF4 e INT8 no bitsandbytes, com 7 suítes de perguntas. Daqui vêm as Figuras 2 e 3, a Tabela 1 e a calculadora.</li>
           <li><b>14 domínios</b> em português e inglês (medicina, direito, finanças, ciências, história, poesia, programação, matemática) e o MMLU, com 300 a 400 perguntas por domínio.</li>
           <li><b>Medição</b> pelo contador de energia da própria GPU (NVML), com ruído de 0,8% entre execuções e blocos de pelo menos 1 segundo. O medidor chegou a detectar uma GPU com defeito térmico.</li>
           <li><b>Rigor</b>: cada fase com regras escritas antes dos dados (pré-registro) e intervalos de confiança para toda diferença de qualidade.</li>
