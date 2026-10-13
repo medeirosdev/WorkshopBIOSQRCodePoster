@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quantização em LLMs locais · III WBI0S</title>
+  <meta name="description" content="Caracterização do custo energético e de carbono da inferência de LLMs locais quantizados. Pôster nº 04 do III Workshop do BI0S (Unicamp, 2026).">
+  <meta name="theme-color" content="#0B2444">
+  <meta property="og:title" content="Quantização em LLMs locais: custo energético e de carbono da inferência">
+  <meta property="og:description" content="Pôster nº 04 do III WBI0S · Guilherme de Medeiros Ellena · IMECC/Unicamp">
+  <meta property="og:image" content="assets/img/fig2_carbono.webp">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B2444'/%3E%3Cpath d='M18 44V20h7l7 11 7-11h7v24h-7V32l-7 10-7-10v12z' fill='%23E8701A'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="topo">
+  <a class="marca" href="#inicio"><span class="ponto"></span>III WBI0S <span class="sep">·</span> Pôster nº 04</a>
+  <nav aria-label="Seções">
+    <a href="#perguntas">Respostas</a>
+    <a href="#calculadora">Calculadora</a>
+    <a href="#resultados">Resultados</a>
+    <a href="#energy-bench" class="destaque">energy-bench</a>
+  </nav>
+</header>
+
+<main id="inicio">
+
+  <section class="hero">
+    <div class="hero-fundo" aria-hidden="true"></div>
+    <div class="conteudo">
+      <p class="sobretitulo">III Workshop do BI0S · Sessão de pôster · Unicamp, outubro de 2026</p>
+      <h1>Quantização em LLMs locais: caracterização do custo energético e de carbono da inferência</h1>
+      <p class="autor"><strong>Guilherme de Medeiros Ellena</strong> · Matemática Aplicada e Computacional · IMECC · Unicamp</p>
+      <div class="acoes">
+        <a class="botao primario" href="#calculadora">Calcule o CO₂ da sua inferência</a>
+        <a class="botao" href="assets/poster.pdf" download>Baixar o pôster (PDF)</a>
+        <a class="botao contorno" href="https://github.com/medeirosdev/energy-bench" target="_blank" rel="noopener">energy-bench ↗</a>
+      </div>
+      <dl class="numeros">
+        <div><dt>até <b>−74%</b></dt><dd>de energia com AWQ e GPTQ</dd></div>
+        <div><dt><b>~10×</b> menos CO₂</dt><dd>na rede brasileira que na média mundial</dd></div>
+        <div><dt><b class="perda">+25%</b></dt><dd>de energia com o INT8 do bitsandbytes</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="perguntas" class="secao">
+    <div class="cabecalho">
+      <p class="rotulo">A resposta em 30 segundos</p>
+      <h2>Quatro perguntas, quatro respostas</h2>
+      <p class="lead">Medimos a energia e a qualidade de 5 modelos abertos (original × NF4) com perguntas de 14 domínios e, nos dois modelos de 8B, comparamos 6 formatos de quantização, numa GPU NVIDIA L40S. O CO₂ vem da energia medida vezes o fator de emissão da rede elétrica.</p>
+    </div>
+    <div class="cartoes">
+      <article class="cartao">
+        <span class="num">1</span>
+        <h3>A quantização sempre reduz a energia?</h3>
+        <p class="resposta">Não.</p>
+        <p>AWQ e GPTQ economizam de 58 a 74%, e o FP8 cerca de 40%. Mas o <strong>INT8 do bitsandbytes gasta 25% a mais</strong> que o modelo original.</p>
+        <a href="#tabela" class="ver">Ver a Tabela 1 →</a>
+      </article>
+      <article class="cartao">
+        <span class="num">2</span>
+        <h3>Por que às vezes ela gasta mais?</h3>
+        <p class="resposta">Respostas curtas e divagação.</p>
+        <p>Descomprimir os pesos tem um custo. O NF4 só compensa depois de <strong>3 a 19 tokens</strong> de resposta, e nunca no modelo de 1,7B. Às vezes o modelo comprimido também escreve mais.</p>
+        <a href="#galeria" class="ver">Ver as curvas →</a>
+      </article>
+      <article class="cartao">
+        <span class="num">3</span>
+        <h3>Quanto CO₂, e o que pesa mais?</h3>
+        <p class="resposta">A rede e o lote, mais que o formato.</p>
+        <p>A mesma resposta emite <strong>~10× menos CO₂</strong> no Brasil que na média mundial. Atender 16 perguntas juntas reduz a energia de 5 a 10×. O formato, de 1,7 a 2,7×.</p>
+        <a href="#resultados" class="ver">Ver a Figura 2 →</a>
+      </article>
+      <article class="cartao">
+        <span class="num">4</span>
+        <h3>Custa qualidade? O MMLU avisa?</h3>
+        <p class="resposta">Depende do domínio, e o MMLU não avisa.</p>
+        <p>No Qwen3-8B em NF4, o MMLU não perde nada, mas <strong>finanças perde 14,7 pontos</strong>. O FP8 não teve perda demonstrada em nenhum domínio testado.</p>
+        <a href="#qualidade" class="ver">Ver a Figura 3 →</a>
+      </article>
+    </div>
+  </section>
+
+  <section id="calculadora" class="secao calc-secao">
+    <div class="cabecalho">
+      <p class="rotulo">Interativo</p>
+      <h2>Calcule o CO₂ da sua inferência</h2>
+      <p class="lead">Escolha o modelo, o formato, quantas perguntas o servidor atende de uma vez e onde ele roda. Os valores são os que medimos.</p>
+    </div>
+    <div class="calc">
+      <form class="controles" id="controles" onsubmit="return false">
+        <fieldset>
+          <legend>Modelo</legend>
+          <div class="segmentado" id="c-modelo"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Formato</legend>
+          <div class="fichas" id="c-formato"></div>
+          <p class="nota-runtime" id="c-runtime"></p>
+        </fieldset>
+        <fieldset>
+          <legend>Perguntas por vez</legend>
+          <div class="segmentado" id="c-lote"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Rede elétrica</legend>
+          <div class="segmentado quatro" id="c-rede"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Quantas respostas? <output id="c-n-rotulo">1 milhão</output></legend>
+          <input type="range" id="c-n" min="3" max="9" step="0.5" value="6" aria-label="Número de respostas (escala logarítmica)">
+          <div class="escala"><span>mil</span><span>1 milhão</span><span>1 bilhão</span></div>
+        </fieldset>
+      </form>
+      <div class="resultado" aria-live="polite">
+        <p class="rotulo-claro">Emissão estimada</p>
+        <p class="grande"><span id="r-co2">—</span></p>
+        <p class="sub" id="r-detalhe">—</p>
+        <div class="barras" id="r-barras"></div>
+        <div class="alerta" id="r-qualidade"></div>
+        <p class="rodape-calc">Energia só da GPU (NVIDIA L40S), com 256 tokens de pergunta e 256 de resposta. O servidor e a refrigeração do datacenter somariam de 20 a 60%. Fatores: MCTI (Brasil, 2025) e Ember (2025).</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="resultados" class="secao">
+    <div class="cabecalho">
+      <p class="rotulo">Resultados</p>
+      <h2>O que mais reduz o CO₂ por resposta</h2>
+      <p class="lead">Onde e como o modelo roda pesam tanto quanto, ou mais que, o formato de compressão.</p>
+    </div>
+    <div class="dupla">
+      <figure class="figura alta">
+        <button class="zoom" data-src="assets/img/fig2_carbono.webp" aria-label="Ampliar a Figura 2">
+          <img src="assets/img/fig2_carbono.webp" alt="Barras: rede brasileira 9,9 vezes menos CO₂, lote 16 9,6 vezes, AWQ 2,7, FP8 1,7, NF4 1,6; INT8 do bitsandbytes 1,3 vez mais. Abaixo, kg de CO₂ por milhão de respostas, de 195 kg (original, média mundial) a 0,9 kg (AWQ em lote 16, Brasil)." loading="lazy">
+        </button>
+        <figcaption><b>Figura 2.</b> (a) Quanto cada escolha reduz o CO₂ por resposta; (b) as escolhas combinadas. Qwen3-8B.</figcaption>
+      </figure>
+      <div id="tabela" class="tabela-bloco">
+        <h3>Tabela 1 · Os formatos lado a lado</h3>
+        <div class="tabela-rolagem">
+          <table>
+            <thead>
+              <tr><th>Formato</th><th>Energia vs. original</th><th>kg CO₂ / milhão, Brasil</th><th>kg CO₂ / milhão, mundo</th><th>Pior perda (p.p.)</th></tr>
+            </thead>
+            <tbody>
+              <tr><th>BF16 (original)</th><td>—</td><td>19,3</td><td>192</td><td>—</td></tr>
+              <tr><th>FP8</th><td>−42%</td><td>11,3</td><td>112</td><td>−3,3</td></tr>
+              <tr><th>INT8 W8A8*</th><td>−44%</td><td>10,5</td><td>105</td><td>−1,3</td></tr>
+              <tr><th>GPTQ</th><td>−64%</td><td>6,9</td><td>68</td><td class="ruim">−7,0</td></tr>
+              <tr><th>AWQ</th><td>−64%</td><td>7,0</td><td>69</td><td class="ruim">−10,3</td></tr>
+              <tr><th>NF4 (bnb)</th><td>−41%</td><td>12,1</td><td>121</td><td class="ruim">−14,7</td></tr>
+              <tr><th>INT8 (bnb)</th><td class="ruim">+25%</td><td>25,8</td><td>256</td><td>−3,7</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="nota">Média de Qwen3-8B e Llama-3.1-8B, uma pergunta por vez; pior perda entre 7 suítes. * Só Llama-3.1-8B. bnb = bitsandbytes. Em vermelho: perda maior que 5 pontos, ou mais energia que o original.</p>
+      </div>
+    </div>
+
+    <div class="dupla invertida" id="qualidade">
+      <div class="texto-bloco">
+        <h3>O benchmark genérico não avisa</h3>
+        <p>O MMLU, a prova genérica mais usada, mostra pouca ou nenhuma perda em quase todos os formatos. No domínio, a história muda: <strong>finanças, direito e matemática</strong> perdem de 5 a 15 pontos com AWQ, GPTQ e NF4.</p>
+        <p>O FP8 e o INT8 W8A8 foram os únicos formatos sem perda demonstrada em nenhum domínio testado.</p>
+        <p class="destaque-texto">Antes de comprimir, teste com as perguntas do seu domínio.</p>
+      </div>
+      <figure class="figura">
+        <button class="zoom" data-src="assets/img/fig3_qualidade.webp" aria-label="Ampliar a Figura 3">
+          <img src="assets/img/fig3_qualidade.webp" alt="Para cada formato, a perda no MMLU (perto de zero) e a perda no pior domínio (até menos 14,7 pontos, finanças, NF4 no Qwen3-8B)." loading="lazy">
+        </button>
+        <figcaption><b>Figura 3.</b> Perda de acurácia no MMLU (anel) e no pior domínio (ponto).</figcaption>
+      </figure>
+    </div>
+
+    <div id="galeria" class="galeria-bloco">
+      <h3>Mais gráficos</h3>
+      <div class="galeria" id="galeria-lista"></div>
+    </div>
+  </section>
+
+  <section id="metodo" class="secao">
+    <div class="cabecalho">
+      <p class="rotulo">Como medimos</p>
+      <h2>Da configuração ao CO₂ por resposta</h2>
+    </div>
+    <div class="dupla">
+      <figure class="figura alta">
+        <button class="zoom" data-src="assets/img/fig1_como_medimos.webp" aria-label="Ampliar a Figura 1">
+          <img src="assets/img/fig1_como_medimos.webp" alt="Fluxograma: modelos e formatos, perguntas por domínio, medição na GPU, energia e qualidade, conversão para CO₂." loading="lazy">
+        </button>
+        <figcaption><b>Figura 1.</b> Como medimos.</figcaption>
+      </figure>
+      <div class="texto-bloco lista">
+        <ul class="passos">
+          <li><b>5 modelos abertos</b>: Qwen3 1,7B, 4B e 8B; Llama-3.1-8B; Gemma-4-E4B.</li>
+          <li><b>Formatos</b>: os 5 modelos em original (BF16) × NF4; nos dois de 8B (Qwen3-8B e Llama-3.1-8B), 6 formatos: BF16, FP8, INT8, AWQ, GPTQ e NF4, no vLLM e no transformers + bitsandbytes. Figuras 2 e 3 e Tabela 1 vêm desses dois.</li>
+          <li><b>14 domínios</b> em português e inglês (medicina, direito, finanças, ciências, história, poesia, programação, matemática) e o MMLU, com 300 a 400 perguntas por domínio.</li>
+          <li><b>Medição</b> pelo contador de energia da própria GPU (NVML), com ruído de 0,8% entre execuções e blocos de pelo menos 1 segundo. O medidor chegou a detectar uma GPU com defeito térmico.</li>
+          <li><b>Rigor</b>: cada fase com regras escritas antes dos dados (pré-registro) e intervalos de confiança para toda diferença de qualidade.</li>
+          <li><b>Carbono</b>: CO₂ = energia (kWh) × fator da rede. Brasil, 46,1 g/kWh (<a href="https://www.gov.br/mcti/pt-br/acompanhe-o-mcti/sirene/dados-e-ferramentas/fatores-de-emissao" target="_blank" rel="noopener">MCTI</a>); média mundial, 458 g/kWh (<a href="https://ember-energy.org/latest-insights/global-electricity-review-2026/2025-in-review/" target="_blank" rel="noopener">Ember</a>).</li>
+        </ul>
+      </div>
+    </div>
+    <div class="dupla guia" id="guia">
+      <div class="texto-bloco">
+        <h3>Guia prático: qual formato usar</h3>
+        <p><b>Modelo pequeno com respostas curtas?</b> Não comprima: não há economia.</p>
+        <p><b>Quer segurança?</b> FP8, ou INT8 W8A8: cerca de 40% menos energia e nenhuma perda demonstrada.</p>
+        <p><b>Quer a máxima economia?</b> AWQ ou GPTQ, mas teste no seu domínio antes. Se perder 5 pontos ou mais, volte para o FP8.</p>
+        <p><b>Evite</b> o INT8 do bitsandbytes, que gasta mais, e o NF4 quando há vários usuários.</p>
+      </div>
+      <figure class="figura">
+        <button class="zoom" data-src="assets/img/guia_formato.webp" aria-label="Ampliar o guia de formato">
+          <img src="assets/img/guia_formato.webp" alt="Fluxograma de decisão para escolher o formato de quantização." loading="lazy">
+        </button>
+      </figure>
+    </div>
+  </section>
+
+  <section id="energy-bench" class="secao">
+    <div class="eb">
+      <div class="eb-texto">
+        <p class="rotulo-claro">Biblioteca aberta · Python · Apache-2.0</p>
+        <h2>Meça você mesmo com o <span class="laranja">energy-bench</span></h2>
+        <p>A biblioteca que nasceu deste trabalho: mede a energia da inferência de LLMs locais de forma reprodutível e escolhe a configuração que gasta menos sem perder qualidade. Usa o contador de energia da GPU, desconta o consumo parado e casa a GPU pelo identificador, para nunca medir o job do vizinho.</p>
+        <div class="acoes">
+          <a class="botao primario" href="https://github.com/medeirosdev/energy-bench" target="_blank" rel="noopener">Ver no GitHub ↗</a>
+          <a class="botao contorno-claro" href="https://pypi.org/project/energy-bench/" target="_blank" rel="noopener">PyPI · v0.1.0 ↗</a>
+        </div>
+      </div>
+      <div class="eb-codigo">
+        <div class="terminal">
+          <div class="barra-term"><span></span><span></span><span></span><button class="copiar" data-copiar="pip install &quot;energy-bench[transformers,bnb]&quot;">copiar</button></div>
+<pre><code><span class="c">$</span> pip install "energy-bench[transformers,bnb]"
+
+<span class="k">from</span> energy_bench <span class="k">import</span> measure, MeasureConfig, prepare_task
+<span class="k">from</span> energy_bench.backends.transformers <span class="k">import</span> TransformersBackend
+
+task = prepare_task(<span class="s">"mmlu"</span>, n=<span class="n">150</span>)
+<span class="k">with</span> TransformersBackend(<span class="s">"Qwen/Qwen3-8B"</span>, precision=<span class="s">"int4"</span>) <span class="k">as</span> b:
+    report = measure(b, task, MeasureConfig(reps=<span class="n">3</span>))
+
+report.energy_j_net_mean   <span class="c"># joules</span>
+report.accuracy</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="fontes" class="secao fontes">
+    <div class="cabecalho">
+      <p class="rotulo">Fontes</p>
+      <h2>Referências</h2>
+    </div>
+    <ol class="refs">
+      <li>BRASIL. Ministério da Ciência, Tecnologia e Inovação. <a href="https://www.gov.br/mcti/pt-br/acompanhe-o-mcti/sirene/dados-e-ferramentas/fatores-de-emissao" target="_blank" rel="noopener">Fatores de emissão de CO₂ da geração de energia elétrica no Sistema Interligado Nacional</a>. Brasília: MCTI/SIRENE, 2026. Acesso em: 12 out. 2026.</li>
+      <li>EMBER. <a href="https://ember-energy.org/latest-insights/global-electricity-review-2026/" target="_blank" rel="noopener">Global Electricity Review 2026</a>. Londres: Ember, 2026.</li>
+      <li>DETTMERS, T. et al. <a href="https://arxiv.org/abs/2305.14314" target="_blank" rel="noopener">QLoRA: efficient finetuning of quantized LLMs</a>. arXiv:2305.14314, 2023.</li>
+      <li>FRANTAR, E. et al. <a href="https://arxiv.org/abs/2210.17323" target="_blank" rel="noopener">GPTQ: accurate post-training quantization for generative pre-trained transformers</a>. arXiv:2210.17323, 2022.</li>
+      <li>LIN, J. et al. <a href="https://arxiv.org/abs/2306.00978" target="_blank" rel="noopener">AWQ: activation-aware weight quantization for LLM compression and acceleration</a>. arXiv:2306.00978, 2023.</li>
+    </ol>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="rodape-grade">
+    <div>
+      <p class="rodape-titulo">Guilherme de Medeiros Ellena</p>
+      <p>Matemática Aplicada e Computacional · IMECC · Unicamp</p>
+      <p><a href="mailto:g256774@dac.unicamp.br">g256774@dac.unicamp.br</a></p>
+    </div>
+    <div>
+      <p class="rodape-titulo">III WBI0S</p>
+      <p>22 e 23 de outubro de 2026 · Unicamp · Laboratório Galileu</p>
+      <p>Infraestrutura computacional: Recod.ai · IC/Unicamp</p>
+    </div>
+  </div>
+</footer>
+
+<dialog id="lightbox" aria-label="Imagem ampliada">
+  <button class="fechar" aria-label="Fechar">×</button>
+  <img alt="">
+</dialog>
+
+<script src="assets/dados.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
