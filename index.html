@@ -95,7 +95,7 @@
         <span class="num">3</span>
         <h3>Quanto CO₂ se emite, e o que pesa mais?</h3>
         <p class="resposta">A rede elétrica e o lote pesam mais que o formato.</p>
-        <p>Na rede brasileira, a mesma resposta emite <strong>cerca de 10 vezes menos CO₂</strong> que na média mundial. Atender 16 perguntas por vez reduz a energia de 5 a 10 vezes; a escolha do formato, de 1,7 a 2,7 vezes.</p>
+        <p>Na rede brasileira, a mesma resposta emite <strong>cerca de 10 vezes menos CO₂</strong> que na média mundial. Atender 16 perguntas por vez reduz a energia de 5 a 10 vezes, <strong>sem piorar as respostas</strong>: nas mesmas perguntas, 26 de 28 comparações entre lote 1 e lote 16 foram não-inferiores. A escolha do formato reduz de 1,7 a 2,7 vezes.</p>
         <a href="#resultados" class="ver">Ver a Figura 3 →</a>
       </article>
       <article class="cartao">
@@ -173,7 +173,7 @@
         </div>
         <div id="q-linhas"></div>
       </div>
-      <p class="qual-nota">Medido em lote 16, com 300 a 400 perguntas por domínio. O original é comparado no mesmo runtime do formato (vLLM ou transformers), por isso seus acertos variam um pouco entre formatos. Na régua, o ponto é a diferença, a faixa é o intervalo de 95%, a linha cheia é o zero e a tracejada é a margem de −5 pontos. "Perguntas que mudaram": quantas só o original acertou e quantas só o comprimido acertou; a diferença entre as duas é o que move a acurácia.</p>
+      <p class="qual-nota">Agrupar perguntas não mudou a acurácia: comparando as mesmas perguntas uma por vez (F3) e em lotes de 16 (F5), 26 de 28 comparações foram não-inferiores, com diferenças de −2,7 a +2,0 pontos e de 79% a 100% de respostas iguais (Qwen3-8B e Llama-3.1-8B, BF16 e NF4). Medido em lote 16, com 300 a 400 perguntas por domínio. O original é comparado no mesmo runtime do formato (vLLM ou transformers), por isso seus acertos variam um pouco entre formatos. Na régua, o ponto é a diferença, a faixa é o intervalo de 95%, a linha cheia é o zero e a tracejada é a margem de −5 pontos. "Perguntas que mudaram": quantas só o original acertou e quantas só o comprimido acertou; a diferença entre as duas é o que move a acurácia.</p>
     </div>
   </section>
 
